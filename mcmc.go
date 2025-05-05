@@ -2,6 +2,7 @@ package mcmc
 
 import (
 	"iter"
+	"math"
 	"math/rand/v2"
 	"slices"
 )
@@ -34,10 +35,10 @@ func Sample(scoreFn func(x []float64) float64, opts Settings) iter.Seq[[]float64
 			// Calculate the acceptance probability a = min(1, [P(x') g(x'|x_t)] / [P(x_t) g(x_t|x')]).
 			//  Note that with a symmetric proposal distribution: g(x'|x_t) = g(x_t|x') so we can leave those out.
 			scorep := scoreFn(xp)
-			a := min(1, scorep/scoret)
+			a := scorep / scoret // a = min(1, a)
 			// Generate u ~ U(0,1).
 			// If u < a, then Accept x' and set x_{t+1} = x'.
-			if u := r.Float64(); u < a {
+			if u := r.Float64(); u < a || math.IsNaN(a) {
 				copy(xt, xp)
 				scoret = scorep
 			}
