@@ -34,11 +34,11 @@ func Sample(scoreFn func(x []float64) float64, opts Settings) iter.Seq[[]float64
 			proposal(r, xp, xt, theta)
 			// Calculate the acceptance probability a = min(1, [P(x') g(x'|x_t)] / [P(x_t) g(x_t|x')]).
 			//  Note that with a symmetric proposal distribution: g(x'|x_t) = g(x_t|x') so we can leave those out.
-			scorep := scoreFn(xp)
-			a := scorep / scoret // a = min(1, a)
-			// Generate u ~ U(0,1).
+			// Avoid division in acceptance term in some cases.
+			// Handle NaN and division by 0.
+			// Only generate u ~ U(0,1) when needed.
 			// If u < a, then Accept x' and set x_{t+1} = x'.
-			if a >= 1 || math.IsNaN(a) || r.Float64() < a {
+			if scorep := scoreFn(xp); scorep >= scoret || scoret == 0 || math.IsNaN(scorep) || math.IsNaN(scoret) || r.Float64() < scorep/scoret {
 				copy(xt, xp)
 				scoret = scorep
 			}
