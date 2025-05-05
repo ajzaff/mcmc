@@ -38,7 +38,7 @@ func Sample(scoreFn func(x []float64) float64, opts Settings) iter.Seq[[]float64
 			a := scorep / scoret // a = min(1, a)
 			// Generate u ~ U(0,1).
 			// If u < a, then Accept x' and set x_{t+1} = x'.
-			if u := r.Float64(); u < a || math.IsNaN(a) {
+			if a >= 1 || math.IsNaN(a) || r.Float64() < a {
 				copy(xt, xp)
 				scoret = scorep
 			}
