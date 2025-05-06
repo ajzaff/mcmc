@@ -19,3 +19,6 @@ type Buffer struct {
 
 // LastSample returns the last sample from the Buffer.
 func (b *Buffer) LastSample() []float64 { return b.Buf[0:b.SampleDims] }
+
+// LastProposal returns the last proposed sample from the Buffer.
+func (b *Buffer) LastProposal() []float64 { return b.Buf[b.SampleDims : 2*b.SampleDims] }
