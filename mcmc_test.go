@@ -18,19 +18,14 @@ func scoreFunc(x []float64) float64 {
 	return score
 }
 
-func TestSample(t *testing.T) {
+func TestSampleOnce(t *testing.T) {
 	buf := Buffer{
 		SampleDims: 1,
 		Buf:        []float64{40, 0},
 		Theta:      []float64{1},
 		Rand:       rand.New(rand.NewPCG(1337, 420)),
 	}
-	samples := 0
-	for x := range buf.Sample(scoreFunc) {
-		t.Log(x)
-		// _ = x
-		if samples++; 1000 < samples {
-			break
-		}
+	for range 1000 {
+		buf.Sample(scoreFunc)
 	}
 }

@@ -1,7 +1,6 @@
 package mcmc
 
 import (
-	"iter"
 	"math/rand/v2"
 	"testing"
 )
@@ -11,11 +10,10 @@ func BenchmarkBufferSample(b *testing.B) {
 		SampleDims: 1,
 		Buf:        make([]float64, 2),
 		Theta:      []float64{1},
+		Rand:       rand.New(rand.NewPCG(1337, 420)),
 	}
-	samples := buf.Sample(scoreFunc)
-	buf.Rand = rand.New(rand.NewPCG(1337, 420))
-	next, _ := iter.Pull(samples)
+	b.ResetTimer()
 	for b.Loop() {
-		next()
+		buf.Sample(scoreFunc)
 	}
 }
